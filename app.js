@@ -36,8 +36,10 @@ const INCOME_CATEGORIES = [
 /* ==========================================
    DATABASE LAYER (IndexedDB Core)
    ========================================== */
+let dbPromise = null;
 function initDB() {
-  return new Promise((resolve, reject) => {
+  if (dbPromise) return dbPromise;
+  dbPromise = new Promise((resolve, reject) => {
     const request = indexedDB.open('LifeSyncDB', 1);
 
     request.onerror = (e) => {
@@ -81,6 +83,7 @@ function initDB() {
       console.log('Database stores created successfully');
     };
   });
+  return dbPromise;
 }
 
 // Seed Initial Data Helper
@@ -106,11 +109,15 @@ async function seedInitialData() {
 
 // Database Helpers
 function dbGetStore(storeName, mode = 'readonly') {
+  if (!db) {
+    throw new Error('Database not initialized');
+  }
   const transaction = db.transaction(storeName, mode);
   return transaction.objectStore(storeName);
 }
 
-function dbAdd(storeName, value) {
+async function dbAdd(storeName, value) {
+  if (!db) await initDB();
   return new Promise((resolve, reject) => {
     const store = dbGetStore(storeName, 'readwrite');
     const req = store.add(value);
@@ -119,7 +126,8 @@ function dbAdd(storeName, value) {
   });
 }
 
-function dbPut(storeName, value) {
+async function dbPut(storeName, value) {
+  if (!db) await initDB();
   return new Promise((resolve, reject) => {
     const store = dbGetStore(storeName, 'readwrite');
     const req = store.put(value);
@@ -128,7 +136,8 @@ function dbPut(storeName, value) {
   });
 }
 
-function dbGet(storeName, key) {
+async function dbGet(storeName, key) {
+  if (!db) await initDB();
   return new Promise((resolve, reject) => {
     const store = dbGetStore(storeName, 'readonly');
     const req = store.get(key);
@@ -137,7 +146,8 @@ function dbGet(storeName, key) {
   });
 }
 
-function dbDelete(storeName, key) {
+async function dbDelete(storeName, key) {
+  if (!db) await initDB();
   return new Promise((resolve, reject) => {
     const store = dbGetStore(storeName, 'readwrite');
     const req = store.delete(key);
@@ -146,7 +156,8 @@ function dbDelete(storeName, key) {
   });
 }
 
-function dbGetAll(storeName) {
+async function dbGetAll(storeName) {
+  if (!db) await initDB();
   return new Promise((resolve, reject) => {
     const store = dbGetStore(storeName, 'readonly');
     const req = store.getAll();
@@ -344,6 +355,9 @@ const SystemService = {
 
   async resetDatabase() {
     return new Promise((resolve, reject) => {
+      if (db) {
+        db.close();
+      }
       const req = indexedDB.deleteDatabase('LifeSyncDB');
       req.onsuccess = () => {
         console.log('Database deleted successfully');
@@ -352,6 +366,11 @@ const SystemService = {
         resolve();
       };
       req.onerror = () => reject(req.error);
+      req.onblocked = () => {
+        console.warn('Database deletion blocked, reloading page to force close connections');
+        localStorage.clear();
+        location.reload();
+      };
     });
   }
 };
@@ -1502,6 +1521,17 @@ if (typeof window !== 'undefined' && window.speechSynthesis) {
    INITIALIZATION & EVENT REGISTRATION
    ========================================== */
 document.addEventListener('DOMContentLoaded', async () => {
+  // One-time auto-reset to start from zero as requested
+  if (!localStorage.getItem('hasClearedOnce_v2')) {
+    localStorage.setItem('hasClearedOnce_v2', 'true');
+    localStorage.clear();
+    const req = indexedDB.deleteDatabase('LifeSyncDB');
+    req.onsuccess = req.onerror = req.onblocked = () => {
+      location.reload();
+    };
+    return;
+  }
+
   // Initialize IndexedDB
   await initDB();
   await seedInitialData();

@@ -40,6 +40,8 @@
   --spring-easing: cubic-bezier(0.34, 1.56, 0.64, 1);
   --smooth-easing: cubic-bezier(0.25, 1, 0.5, 1);
   --duration-normal: 350ms;
+  --color-sheet-bg: rgba(23, 23, 23, 0.85);
+  --color-assistant-bg: rgba(9, 9, 9, 0.95);
 }
 
 /* ==========================================
@@ -67,6 +69,8 @@ body.theme-light-violet {
   --color-accent-dim: rgba(124, 58, 237, 0.15);
   --color-list-item-bg: rgba(9, 9, 9, 0.02);
   --color-list-item-hover-bg: rgba(9, 9, 9, 0.04);
+  --color-sheet-bg: rgba(255, 255, 255, 0.9);
+  --color-assistant-bg: rgba(245, 242, 242, 0.95);
 }
 
 body.theme-light-orange {
@@ -85,6 +89,8 @@ body.theme-light-orange {
   --color-list-item-bg: rgba(9, 9, 9, 0.02);
   --color-list-item-hover-bg: rgba(9, 9, 9, 0.04);
   --shadow-glow: 0 0 20px rgba(249, 115, 22, 0.25);
+  --color-sheet-bg: rgba(255, 255, 255, 0.9);
+  --color-assistant-bg: rgba(245, 242, 242, 0.95);
 }
 
 /* ==========================================
@@ -985,7 +991,7 @@ body {
   bottom: 0;
   left: 0;
   width: 100%;
-  background: rgba(23, 23, 23, 0.85);
+  background: var(--color-sheet-bg);
   backdrop-filter: blur(40px);
   border: 1px solid var(--color-border);
   border-top-left-radius: 32px;
@@ -1004,7 +1010,7 @@ body {
 .bottom-sheet-handle {
   width: 48px;
   height: 4px;
-  background: rgba(255, 255, 255, 0.15);
+  background: var(--color-text-tertiary);
   border-radius: var(--radius-pill);
   margin: 0 auto 20px auto;
 }
@@ -1027,6 +1033,18 @@ body {
   border: none;
   color: var(--color-text-secondary);
   cursor: pointer;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-pill);
+  transition: background 0.2s, color 0.2s;
+}
+
+.bottom-sheet-close:hover {
+  background: var(--color-border);
+  color: var(--color-text-primary);
 }
 
 /* Multi-step Forms */
@@ -1063,13 +1081,14 @@ body {
 
 /* Inputs & buttons */
 .input-big-amount {
-  background: transparent;
-  border: none;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
   font-family: var(--font-display);
   font-size: 56px;
   font-weight: 800;
   text-align: center;
-  color: var(--color-text-primary);
+  color: var(--color-text-primary) !important;
   width: 100%;
   outline: none;
   padding: 16px 0;
@@ -1077,15 +1096,15 @@ body {
 }
 
 .input-big-amount::placeholder {
-  color: rgba(255, 255, 255, 0.1);
+  color: var(--color-text-tertiary) !important;
 }
 
 .input-text {
-  background: var(--color-surface-dim);
-  border: 1px solid var(--color-border);
+  background: var(--color-surface-dim) !important;
+  border: 1px solid var(--color-border) !important;
   border-radius: var(--radius-input);
   padding: 14px 16px;
-  color: var(--color-text-primary);
+  color: var(--color-text-primary) !important;
   font-family: var(--font-body);
   font-size: 15px;
   outline: none;
@@ -1093,8 +1112,8 @@ body {
 }
 
 .input-text:focus {
-  border-color: var(--color-accent);
-  box-shadow: 0 0 10px rgba(124, 58, 237, 0.1);
+  border-color: var(--color-accent) !important;
+  box-shadow: 0 0 10px rgba(124, 58, 237, 0.1) !important;
 }
 
 .category-scroll-row {
@@ -1223,7 +1242,7 @@ body {
   left: 0;
   width: 100%;
   height: calc(100% - 76px);
-  background: rgba(9, 9, 9, 0.95);
+  background: var(--color-assistant-bg);
   backdrop-filter: blur(24px);
   z-index: 150;
   padding: 24px;
