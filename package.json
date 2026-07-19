@@ -1,0 +1,14 @@
+{
+  "name": "lifesync-app",
+  "version": "2.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^5.0.0",
+    "qrcode-terminal": "^0.12.0"
+  }
+}

@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>LifeSync 2.0 - Personal AI OS</title>
+  
+  <!-- Tailwind CSS Play CDN for Stitch UI compatibility -->
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  
+  <!-- Client-side QR Code library (CDN) -->
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4/build/qrcode.min.js"></script>
+
+  <!-- Custom CSS Design System & Emulator frames -->
+  <link href="/style.css" rel="stylesheet"/>
+
+  <!-- Tailwind theme configs matches Stitch system colors -->
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "secondary": "#c6c6c7",
+            "secondary-container": "#454747",
+            "tertiary": "#c8c6c5",
+            "on-background": "#e5e2e1",
+            "on-secondary-container": "#b4b5b5",
+            "surface-dim": "#131313",
+            "surface-container-low": "#1c1b1b",
+            "primary": "#d2bbff",
+            "surface-container": "#201f1f",
+            "surface-container-lowest": "#0e0e0e",
+            "error": "#ffb4ab",
+            "surface-bright": "#3a3939",
+            "background": "#131313",
+            "surface-container-high": "#2a2a2a",
+            "primary-fixed": "#eaddff",
+            "surface-container-highest": "#353534",
+            "outline": "#958da1",
+            "error-container": "#93000a",
+            "on-primary": "#3f008e",
+            "surface": "#131313",
+            "on-surface": "#e5e2e1",
+            "on-secondary": "#2f3131",
+            "on-surface-variant": "#ccc3d8",
+            "primary-container": "#7c3aed"
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body>
+
+  <!-- ==========================================
+       OUTER SHOWER: DESKTOP DEMO DASHBOARD
+       ========================================== -->
+  <div class="desktop-layout">
+    
+    <!-- Left Panel: Information & Mobile Testing QR -->
+    <div class="desktop-info-panel">
+      <div class="desktop-header">
+        <h1>LifeSync 2.0</h1>
+        <p>A personal productivity and finance management companion app enhanced with an intelligent local AI assistant. Build on a Manual-First, AI-Assisted philosophy.</p>
+        
+        <div class="desktop-instructions">
+          <h2>Quick Features Guide</h2>
+          <ul>
+            <li>
+              <span class="material-symbols-outlined">mic</span>
+              <span><strong>Local AI Assistant:</strong> Dictate expenses, routines, and goals.</span>
+            </li>
+            <li>
+              <span class="material-symbols-outlined">database</span>
+              <span><strong>Offline-First:</strong> Transactions occur in client IndexedDB.</span>
+            </li>
+            <li>
+              <span class="material-symbols-outlined">sound_detection_dog_barking</span>
+              <span><strong>Speech Synthesis:</strong> Flat-voice vocal feedback & synth sounds.</span>
+            </li>
+            <li>
+              <span class="material-symbols-outlined">settings_suggest</span>
+              <span><strong>Trust Model:</strong> All calculations are verified, not AI-assumed.</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Network QR Code for mobile hot-reload -->
+      <div class="desktop-qr-panel">
+        <div class="qr-code-container">
+          <canvas id="qr-code-canvas"></canvas>
+        </div>
+        <div class="qr-details">
+          <h3>Scan to Test on Mobile</h3>
+          <p>Scan this QR code with your phone (on the same Wi-Fi) to load the app on your mobile device.</p>
+          <span class="network-url-badge" id="network-url-badge">http://localhost:5173</span>
+        </div>
+      </div>
+
+      <div class="desktop-footer">
+        <p>LifeSync v2.0.0 · Design inspired by Nothing OS & Apple HIG</p>
+      </div>
+    </div>
+
+    <!-- Right Panel: Phone Emulator Frame -->
+    <div class="desktop-emulator-area">
+      <div class="emulator-frame">
+        
+        <!-- ==========================================
+             MOBILE VIEWPORT
+             ========================================== -->
+        <div class="mobile-viewport">
+          
+          <div class="app-container">
+            
+            <!-- Toast notification container -->
+            <div class="notification-container" id="toast-container"></div>
+            
+            <!-- Header bar -->
+            <header class="app-header">
+              <div class="app-branding">
+                <div class="profile-avatar flex items-center justify-center cursor-pointer" onclick="document.getElementById('avatar-input').click()" id="header-avatar-container">
+                  <img class="profile-avatar-img w-full h-full object-cover hidden" id="header-avatar-image" src="" alt="Profile avatar"/>
+                  <span class="profile-avatar-initials font-mono text-sm font-bold" id="header-avatar-initials">U</span>
+                </div>
+                <span class="app-title">LifeSync</span>
+              </div>
+              <div class="header-actions">
+                <button class="header-btn" id="header-mic-btn" title="Open Voice Panel">
+                  <span class="material-symbols-outlined">mic</span>
+                </button>
+              </div>
+            </header>
+
+            <!-- Screens slider container -->
+            <main class="view-slider no-scrollbar">
+              
+              <!-- TAB 1: HOME (DASHBOARD) -->
+              <section class="screen active" id="home-tab">
+                <div class="flex justify-between items-end">
+                  <div>
+                    <h2 class="section-title time-greeting">Good Morning</h2>
+                    <p class="section-subtitle date-today">October 23, Monday</p>
+                  </div>
+                  <div class="flex items-center gap-1 text-on-surface-variant opacity-70">
+                    <span class="material-symbols-outlined text-[20px]">partly_cloudy_day</span>
+                    <span class="font-mono text-xs">21°C</span>
+                  </div>
+                </div>
+
+                <!-- Bento Routine & Budget overview -->
+                <div class="bento-grid">
+                  
+                  <!-- Routine Completion progress ring -->
+                  <div class="glass-card p-md flex items-center justify-between bento-span-2 glow">
+                    <div class="space-y-1">
+                      <h3 class="card-title">Today's Routine</h3>
+                      <p class="text-xs text-on-surface-variant opacity-70">Completed tasks track</p>
+                      <button class="card-action mt-2 text-left" onclick="navigateToTab('routine')">Checklist</button>
+                    </div>
+                    <div class="progress-ring-container">
+                      <svg class="w-full h-full" viewBox="0 0 160 160">
+                        <circle class="text-[#202020] stroke-current" cx="80" cy="80" fill="transparent" r="70" stroke-width="8"></circle>
+                        <circle class="text-primary-container stroke-current progress-ring-circle" id="dash-progress-ring" cx="80" cy="80" fill="transparent" r="70" stroke-linecap="round" stroke-width="9" style="stroke-dasharray: 440; stroke-dashoffset: 220;"></circle>
+                      </svg>
+                      <div class="progress-ring-text" id="dash-progress-text">50%</div>
+                    </div>
+                  </div>
+
+                  <!-- Streak Flame Card -->
+                  <div class="glass-card p-md flex flex-col justify-between">
+                    <div class="streak-box">
+                      <div class="streak-flame-container">
+                        <span class="material-symbols-outlined streak-flame">local_fire_department</span>
+                      </div>
+                      <div>
+                        <h3 class="card-title">Streak</h3>
+                        <p class="font-display text-xl font-bold" id="dash-streak-days">12 Days</p>
+                      </div>
+                    </div>
+                    <p class="text-[10px] text-on-surface-variant font-mono uppercase mt-2 truncate" id="dash-streak-name">Meditation</p>
+                  </div>
+
+                  <!-- Savings/Budget Card -->
+                  <div class="glass-card p-md flex flex-col justify-between">
+                    <div>
+                      <h3 class="card-title">Daily Budget</h3>
+                      <p class="text-[10px] text-on-surface-variant font-mono" id="dash-budget-percent">0% Spent</p>
+                    </div>
+                    <div class="budget-progress-box mt-3">
+                      <p class="font-display text-lg font-bold" id="dash-budget-total">₹0 / ₹8000</p>
+                      <div class="progress-bar-bg mt-1">
+                        <div class="progress-bar-fill" id="dash-budget-fill" style="width: 0%"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Voice AI Assistant Promo Card -->
+                <div class="glass-card p-4 flex items-center gap-4 bg-gradient-to-r from-primary-container/10 to-transparent border-primary-container/20 cursor-pointer" onclick="toggleAssistantPanel()">
+                  <div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center text-white">
+                    <span class="material-symbols-outlined">spatial_audio_off</span>
+                  </div>
+                  <div class="flex-1">
+                    <h4 class="text-sm font-semibold">Try Voice Actions</h4>
+                    <p class="text-xs text-on-surface-variant opacity-70">"I spent 120 rupees on lunch"</p>
+                  </div>
+                  <span class="material-symbols-outlined text-on-surface-variant">chevron_right</span>
+                </div>
+
+                <!-- Recent Expenses -->
+                <div class="glass-card">
+                  <div class="card-header">
+                    <h3 class="card-title">Recent Expenses</h3>
+                    <span class="card-action" onclick="navigateToTab('expenses')">See All</span>
+                  </div>
+                  <div class="list-container" id="dash-recent-expenses">
+                    <!-- Loaded dynamically in app.js -->
+                  </div>
+                </div>
+              </section>
+
+              <!-- TAB 2: EXPENSES VIEW -->
+              <section class="screen" id="expenses-tab">
+                <div>
+                  <h2 class="section-title">Expenses</h2>
+                  <p class="section-subtitle">Manage payments and logs manually or via Voice assistant.</p>
+                </div>
+
+                <!-- Financial Bento Overview -->
+                <div class="grid grid-cols-2 gap-4">
+                  <div class="glass-card p-md flex flex-col justify-between bg-surface-dim">
+                    <div>
+                      <h3 class="card-title">Monthly Total</h3>
+                      <p class="font-display text-2xl font-bold mt-2" id="exp-monthly-total">₹0.00</p>
+                    </div>
+                  </div>
+                  <div class="glass-card p-md flex flex-col justify-between bg-surface-dim">
+                    <div>
+                      <h3 class="card-title">Daily Average</h3>
+                      <p class="font-display text-2xl font-bold mt-2" id="exp-daily-average">₹0.00</p>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Transaction List -->
+                <div class="glass-card">
+                  <div class="card-header">
+                    <h3 class="card-title">History Logs</h3>
+                  </div>
+                  <div class="list-container" id="expenses-tab-list">
+                    <!-- Dynamic rendering in app.js -->
+                  </div>
+                </div>
+              </section>
+
+              <!-- TAB 3: ROUTINE & HABITS CHECKLIST -->
+              <section class="screen" id="routine-tab">
+                <div>
+                  <h2 class="section-title">Daily Routine</h2>
+                  <p class="section-subtitle">Track your checklists, habits, and daily consistency streaks.</p>
+                </div>
+
+                <!-- Routine Checklist -->
+                <div class="glass-card">
+                  <div class="card-header">
+                    <h3 class="card-title">Checklist</h3>
+                    <span class="card-action text-accent cursor-pointer mr-3" onclick="addNewRoutineTaskPrompt()">+ Add Task</span>
+                    <span class="card-action text-xs" id="routine-completed-count">0/0 Completed</span>
+                  </div>
+                  <div class="list-container" id="routine-tab-list">
+                    <!-- Dynamic rendering in app.js -->
+                  </div>
+                </div>
+
+                <!-- Habits streaks heatmap calendar -->
+                <div>
+                  <div class="card-header mb-2">
+                    <h3 class="card-title">Habits Streak Map</h3>
+                    <span class="card-action text-accent cursor-pointer" onclick="addNewHabitPrompt()">+ Add Habit</span>
+                  </div>
+                  <div class="list-container" id="habits-tab-list">
+                    <!-- Dynamic rendering in app.js -->
+                  </div>
+                </div>
+              </section>
+
+              <!-- TAB 4: INSIGHTS & ANALYTICS CHARTS -->
+              <section class="screen" id="insights-tab">
+                <div>
+                  <h2 class="section-title">Insights</h2>
+                  <p class="section-subtitle">Analytical reports generated from verified database records.</p>
+                </div>
+
+                <!-- Line chart for spending trends -->
+                <div class="glass-card">
+                  <h3 class="card-title">Spending Trends (7 Days)</h3>
+                  <div class="chart-line-box">
+                    <svg class="w-full h-full" viewBox="0 0 400 100" preserveAspectRatio="none">
+                      <!-- Grid lines -->
+                      <line class="chart-grid-line" x1="0" y1="20" x2="400" y2="20" />
+                      <line class="chart-grid-line" x1="0" y1="50" x2="400" y2="50" />
+                      <line class="chart-grid-line" x1="0" y1="85" x2="400" y2="85" />
+                      <!-- Line curves -->
+                      <path id="chart-line-fill" fill="url(#violetGradient)" opacity="0.15" d="" />
+                      <path id="chart-line-path" fill="none" stroke="#7C3AED" stroke-width="2.5" class="chart-path" d="" />
+                      <!-- Definitions -->
+                      <defs>
+                        <linearGradient id="violetGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                          <stop offset="0%" stop-color="#7C3AED" />
+                          <stop offset="100%" stop-color="#7C3AED" stop-opacity="0" />
+                        </linearGradient>
+                      </defs>
+                    </svg>
+                  </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                  <!-- Category allocations distribution -->
+                  <div class="glass-card p-4 col-span-2 md:col-span-1">
+                    <h3 class="card-title mb-4">Category Share</h3>
+                    <div class="allocation-box">
+                      <svg class="allocation-circle transform -rotate-90" viewBox="0 0 36 36" id="insights-pie-circle">
+                        <!-- Loaded dynamically in app.js -->
+                      </svg>
+                      <div class="allocation-details" id="insights-pie-details">
+                        <!-- Loaded dynamically in app.js -->
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Weekly routine compliance bars -->
+                  <div class="glass-card p-4 col-span-2 md:col-span-1">
+                    <h3 class="card-title mb-4">Routine Health</h3>
+                    <div class="chart-bars-box" id="insights-routine-bars">
+                      <!-- Loaded dynamically in app.js -->
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Monthly PDF report card -->
+                <div class="glass-card flex items-center justify-between p-4 bg-surface-dim">
+                  <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-surface rounded-xl border border-white/5 flex items-center justify-center">
+                      <span class="material-symbols-outlined text-primary">description</span>
+                    </div>
+                    <div>
+                      <h4 class="text-sm font-semibold">Monthly Audit Report</h4>
+                      <p class="text-xs text-on-surface-variant opacity-70">Verified finance & habits logs</p>
+                    </div>
+                  </div>
+                  <button class="bg-[#242424] border border-white/5 text-xs font-semibold py-2 px-4 rounded-full flex items-center gap-1 active:scale-95 transition-transform" onclick="alert('Monthly PDF generated successfully.')">
+                    <span class="material-symbols-outlined text-xs">download</span>
+                    PDF
+                  </button>
+                </div>
+              </section>
+
+              <!-- TAB 5: USER PROFILE & SETTINGS -->
+              <section class="screen" id="profile-tab">
+                <div class="flex items-center gap-4 py-4 border-b border-white/5">
+                  <div class="w-16 h-16 rounded-full overflow-hidden border border-accent/40 bg-surface flex items-center justify-center cursor-pointer" onclick="document.getElementById('avatar-input').click()" id="profile-avatar-container">
+                    <img class="profile-avatar-img w-full h-full object-cover hidden" id="profile-avatar-image" src="" alt="User avatar"/>
+                    <span class="profile-avatar-initials font-mono text-xl font-bold" id="profile-avatar-initials">U</span>
+                  </div>
+                  <input type="file" id="avatar-input" class="hidden" accept="image/*">
+                  <div>
+                    <h2 class="text-xl font-bold profile-name-text">Guest</h2>
+                    <p class="text-xs text-on-surface-variant opacity-60">Personal AI Companion active</p>
+                  </div>
+                </div>
+
+                <!-- Customizations Settings -->
+                <div class="settings-list">
+                  <h3 class="card-title px-2">System Config</h3>
+                  
+                  <div class="settings-item">
+                    <div>
+                      <h4 class="text-sm font-medium">Visual Theme</h4>
+                      <p class="text-xs text-on-surface-variant opacity-70">Switch visual accents & colors</p>
+                    </div>
+                    <select id="setting-theme" class="input-text text-xs bg-surface-dim border border-white/10 max-w-[140px] py-1 px-2">
+                      <option value="dark-violet">Dark Violet</option>
+                      <option value="dark-orange">Dark Orange</option>
+                      <option value="light-violet">Light Violet</option>
+                      <option value="light-orange">Light Orange</option>
+                    </select>
+                  </div>
+
+                  <div class="settings-item">
+                    <div>
+                      <h4 class="text-sm font-medium">AI Voice</h4>
+                      <p class="text-xs text-on-surface-variant opacity-70">Speech language & gender select</p>
+                    </div>
+                    <select id="setting-voice" class="input-text text-xs bg-surface-dim border border-white/10 max-w-[140px] py-1 px-2">
+                      <option value="">Default OS Voice</option>
+                    </select>
+                  </div>
+
+                  <div class="settings-item">
+                    <div>
+                      <h4 class="text-sm font-medium">Sound Effects</h4>
+                      <p class="text-xs text-on-surface-variant opacity-70">Voice confirmations & synth clicks</p>
+                    </div>
+                    <label class="toggle-switch">
+                      <input type="checkbox" id="toggle-sound" checked />
+                      <span class="toggle-slider"></span>
+                    </label>
+                  </div>
+
+                  <div class="settings-item">
+                    <div>
+                      <h4 class="text-sm font-medium">Haptic Feedback</h4>
+                      <p class="text-xs text-on-surface-variant opacity-70">Soft click haptics on task complete</p>
+                    </div>
+                    <label class="toggle-switch">
+                      <input type="checkbox" id="toggle-haptics" checked />
+                      <span class="toggle-slider"></span>
+                    </label>
+                  </div>
+                </div>
+
+                <!-- Database operations -->
+                <div class="glass-card space-y-4">
+                  <h3 class="card-title">Database Management</h3>
+                  <p class="text-xs text-on-surface-variant leading-relaxed">LifeSync is offline-first. Your data is stored locally in your browser's IndexedDB. Deleting browser history or cache may erase local database records.</p>
+                  
+                  <div class="flex gap-3">
+                    <button class="flex-1 btn-secondary text-xs" onclick="alert('Export completed. data.json saved.')">
+                      <span class="material-symbols-outlined text-sm mr-1">download</span> Export JSON
+                    </button>
+                    <button class="flex-1 btn-secondary text-xs text-danger border-red-500/20" id="btn-reset-db">
+                      <span class="material-symbols-outlined text-sm mr-1">delete_forever</span> Reset DB
+                    </button>
+                  </div>
+                </div>
+              </section>
+
+            </main>
+
+            <!-- Floating action manual '+' button -->
+            <button class="fab-button" id="fab-btn" title="Add Expense">
+              <span class="material-symbols-outlined">add</span>
+            </button>
+
+            <!-- Bottom navigation bar -->
+            <nav class="bottom-nav-bar">
+              <div class="nav-indicator" id="nav-indicator"></div>
+              
+              <div class="nav-tab active" data-tab="home">
+                <span class="material-symbols-outlined filled">home</span>
+                <p>Home</p>
+              </div>
+              <div class="nav-tab" data-tab="expenses">
+                <span class="material-symbols-outlined">account_balance_wallet</span>
+                <p>Expenses</p>
+              </div>
+              <div class="nav-tab" data-tab="routine">
+                <span class="material-symbols-outlined">calendar_today</span>
+                <p>Routine</p>
+              </div>
+              <div class="nav-tab" data-tab="insights">
+                <span class="material-symbols-outlined">analytics</span>
+                <p>Insights</p>
+              </div>
+              <div class="nav-tab" data-tab="profile">
+                <span class="material-symbols-outlined">person</span>
+                <p>Profile</p>
+              </div>
+            </nav>
+
+            <!-- ==========================================
+                 AI ASSISTANT PANEL OVERLAY
+                 ========================================== -->
+            <div class="assistant-panel" id="ai-panel">
+              <div class="assistant-header">
+                <h3>Voice Companion</h3>
+                <button class="bottom-sheet-close" id="close-ai-btn">
+                  <span class="material-symbols-outlined">close</span>
+                </button>
+              </div>
+
+              <!-- Microphone voice recorder widget -->
+              <div class="voice-section">
+                <button class="voice-mic-btn" id="mic-button">
+                  <span class="material-symbols-outlined">mic</span>
+                </button>
+                <div class="voice-status-text" id="mic-status">TAP TO VOICE</div>
+                
+                <!-- Graphic Audio Waveform bars -->
+                <div class="waveform-container">
+                  <div class="waveform-bar"></div>
+                  <div class="waveform-bar"></div>
+                  <div class="waveform-bar"></div>
+                  <div class="waveform-bar"></div>
+                  <div class="waveform-bar"></div>
+                  <div class="waveform-bar"></div>
+                  <div class="waveform-bar"></div>
+                  <div class="waveform-bar"></div>
+                  <div class="waveform-bar"></div>
+                </div>
+              </div>
+
+              <!-- Quick commands helper chips -->
+              <div class="suggestions-row mt-2">
+                <div class="suggestion-tag">“I spent 120 rupees on lunch”</div>
+                <div class="suggestion-tag">“Complete morning yoga”</div>
+                <div class="suggestion-tag">“I studied java for 2 hours”</div>
+                <div class="suggestion-tag">“How much did I spend today?”</div>
+              </div>
+
+              <!-- Speech transcription history logs -->
+              <div class="assistant-scroller mt-2">
+                <h4 class="card-title px-1">Recent Commands History</h4>
+                <div class="voice-history-box" id="ai-history-log">
+                  <!-- Dynamic renders -->
+                </div>
+              </div>
+
+              <!-- Keyboard Ask Anything input field -->
+              <div class="ask-anything-box">
+                <input type="text" class="input-text" id="ai-text-input" placeholder="Ask or type command..."/>
+                <button class="ask-send-btn" id="ai-text-send">
+                  <span class="material-symbols-outlined">send</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- ==========================================
+                 ADD EXPENSE BOTTOM SHEET
+                 ========================================== -->
+            <div class="glass-overlay" id="expense-overlay"></div>
+            <section class="bottom-sheet" id="expense-sheet">
+              <div class="bottom-sheet-handle"></div>
+              
+              <div class="bottom-sheet-header">
+                <h3>Add Expense</h3>
+                <button class="bottom-sheet-close" id="close-sheet-btn">
+                  <span class="material-symbols-outlined">close</span>
+                </button>
+              </div>
+
+              <form id="expense-form" onsubmit="event.preventDefault();">
+                
+                <!-- STEP 1: Amount input -->
+                <div class="form-step active" id="form-step-1">
+                  <div class="form-group text-center">
+                    <label class="form-label">Amount (₹)</label>
+                    <input type="number" step="0.01" class="input-big-amount" id="form-amount" placeholder="0.00" required />
+                  </div>
+                  <button type="button" class="btn-primary w-full mt-4" id="step1-next">Next Step</button>
+                </div>
+
+                <!-- STEP 2: Category Scroll Row -->
+                <div class="form-step" id="form-step-2">
+                  <div class="form-group">
+                    <label class="form-label">Category</label>
+                    <div class="category-scroll-row mt-2">
+                      <button type="button" class="category-chip active" data-cat="food">
+                        <span class="material-symbols-outlined text-violet-500">restaurant</span>
+                        <p>Food</p>
+                      </button>
+                      <button type="button" class="category-chip" data-cat="shop">
+                        <span class="material-symbols-outlined text-amber-500">shopping_bag</span>
+                        <p>Shop</p>
+                      </button>
+                      <button type="button" class="category-chip" data-cat="travel">
+                        <span class="material-symbols-outlined text-emerald-500">directions_car</span>
+                        <p>Travel</p>
+                      </button>
+                      <button type="button" class="category-chip" data-cat="bills">
+                        <span class="material-symbols-outlined text-rose-500">electric_bolt</span>
+                        <p>Bills</p>
+                      </button>
+                      <button type="button" class="category-chip" data-cat="health">
+                        <span class="material-symbols-outlined text-blue-500">fitness_center</span>
+                        <p>Health</p>
+                      </button>
+                      <button type="button" class="category-chip" data-cat="fun">
+                        <span class="material-symbols-outlined text-pink-500">movie</span>
+                        <p>Fun</p>
+                      </button>
+                      <button type="button" class="category-chip" data-cat="friends">
+                        <span class="material-symbols-outlined text-teal-500">group</span>
+                        <p>Friends</p>
+                      </button>
+                      <button type="button" class="category-chip" data-cat="others">
+                        <span class="material-symbols-outlined text-gray-500">more_horiz</span>
+                        <p>Others</p>
+                      </button>
+                    </div>
+                  </div>
+                  <button type="button" class="btn-primary w-full mt-4" id="step2-next">Next Step</button>
+                </div>
+
+                <!-- STEP 3: Description & Payment Method -->
+                <div class="form-step" id="form-step-3">
+                  <div class="form-group">
+                    <label class="form-label">Description</label>
+                    <input type="text" class="input-text mt-1" id="form-desc" placeholder="What was this for?" />
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label mt-2">Payment Method</label>
+                    <select class="input-text mt-1 bg-surface-dim border border-white/10" id="form-paymethod">
+                      <option value="Cash">Cash</option>
+                      <option value="Apple Card">Apple Card</option>
+                      <option value="Debit Card">Debit Card</option>
+                      <option value="Credit Card">Credit Card</option>
+                      <option value="UPI">UPI / Net Banking</option>
+                    </select>
+                  </div>
+                  <button type="button" class="btn-primary w-full mt-6" id="form-submit">Add Transaction</button>
+                </div>
+
+              </form>
+            </section>
+
+            <!-- Confetti Canvas overlay -->
+            <canvas id="confetti-canvas"></canvas>
+
+          </div> <!-- app-container -->
+        </div> <!-- mobile-viewport -->
+        
+      </div> <!-- emulator-frame -->
+    </div> <!-- desktop-emulator-area -->
+    
+  </div> <!-- desktop-layout -->
+
+  <!-- Load JS scripts -->
+  <script type="module" src="/app.js"></script>
+
+</body>
+</html>
