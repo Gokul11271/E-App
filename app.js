@@ -1523,8 +1523,8 @@ if (typeof window !== 'undefined' && window.speechSynthesis) {
 document.addEventListener('DOMContentLoaded', async () => {
   // One-time auto-reset to start from zero as requested
   if (!localStorage.getItem('hasClearedOnce_v2')) {
-    localStorage.setItem('hasClearedOnce_v2', 'true');
     localStorage.clear();
+    localStorage.setItem('hasClearedOnce_v2', 'true');
     const req = indexedDB.deleteDatabase('LifeSyncDB');
     req.onsuccess = req.onerror = req.onblocked = () => {
       location.reload();
