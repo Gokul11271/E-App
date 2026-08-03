@@ -1,0 +1,22 @@
+services:
+  # Development Environment: Runs Vite dev server inside Node container with hot-reloading
+  app-dev:
+    image: node:20-alpine
+    working_dir: /app
+    volumes:
+      - .:/app
+      # Exclude node_modules from mounting to avoid host/container OS mismatch
+      - /app/node_modules
+    ports:
+      - "5173:5173"
+    environment:
+      - NODE_ENV=development
+    command: sh -c "npm install && npm run dev"
+
+  # Production Environment: Builds the application and serves it via Nginx
+  app-prod:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:80"
